@@ -1,0 +1,25 @@
+{
+  "name": "bram-modal",
+  "version": "0.0.2",
+  "description": "",
+  "main": "dist/main.min.js",
+  "homepage": "https://github.com/crispclean/bram-modal#readme",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npx parcel src/index.js",
+    "build": "npx parcel build src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "browserslist": [
+    "> 1%",
+    "not dead"
+  ],
+  "engines": {
+    "node": ">=4.x"
+  },
+  "dependencies": {
+    "parcel": "^2.0.0-alpha.3.2",
+    "tailwindcss": "^1.2.0"
+  }
+}

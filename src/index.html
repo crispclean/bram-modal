@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Bram Modal</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./index.js"></script>
+  </head>
+
+  <body>
+    <h1>Bram Modal Demo</h1>
+
+    <div class="flex pt-2">
+      <button
+        data-modal-trigger="modal-1"
+        class="px-4 bg-transparent p-3 rounded-lg text-indigo-500 hover:bg-gray-100 hover:text-indigo-400 mr-2"
+      >
+        Action
+      </button>
+      <button
+        class="modal-close px-4 bg-indigo-500 p-3 rounded-lg text-white hover:bg-indigo-400"
+      >
+        Close
+      </button>
+    </div>
+  </body>
+</html>
+
+<template id="modal-1">
+  <div id="modal_container" class="container p-16 bg-white max-h-screen m-auto">
+    <div id="modal_header">HEADER</div>
+    <div id="modal_body">BODY</div>
+    <div id="modal_footer">FOOTER</div>
+  </div>
+</template>
