@@ -2,12 +2,12 @@
   "name": "bram-modal",
   "version": "0.0.2",
   "description": "",
-  "main": "dist/main.min.js",
+  "main": "dist/modal.min.js",
   "homepage": "https://github.com/crispclean/bram-modal#readme",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx parcel src/index.js",
-    "build": "npx parcel build src/index.js"
+    "build": "npx parcel build src/modal.js"
   },
   "author": "",
   "license": "ISC",
