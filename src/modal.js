@@ -12,34 +12,57 @@ const defaultDOMString = `
     </div>
   </div>`;
 
+//   onShow: modal => console.info(`${modal.id} is shown`), // [1]
+//   onClose: modal => console.info(`${modal.id} is hidden`), // [2]
+//   openTrigger: 'data-custom-open', // [3]
+//   closeTrigger: 'data-custom-close', // [4]
+//   openClass: 'is-open', // [5]
+//   disableScroll: true, // [6]
+//   disableFocus: false, // [7]
+//   awaitOpenAnimation: false, // [8]
+//   awaitCloseAnimation: false, // [9]
+//   debugMode: true // [10]
+
 const BramModal = class {
-  constructor({ id, customClass, footer }) {
-    this.id = id;
+  constructor(params = {}) {
+    if (params.id == undefined) {
+      throw "ID is a required field";
+    }
+
+    this.id = params.id;
     this.domString = defaultDOMString;
-    this.customClass = customClass;
-    this.footer = footer;
+    this.customClass = params.customClass;
+    this.hideFooter = params.hideFooter;
+    this.onShow = params.onShow;
+    this.onClose = params.onClose;
 
     document.addEventListener(
       "DOMContentLoaded",
-      () => {
-        this.template = document.querySelector("template#" + this.id);
-        this.triggers = document.querySelectorAll(
-          '*[data-modal-trigger="' + this.id + '"]'
-        );
-        this.triggers.forEach((trigger) =>
-          trigger.addEventListener("click", () => this.showModal())
-        );
-      },
-      false
+      this.onDomContentLoaded.bind(this)
     );
   }
 
+  onDomContentLoaded() {
+    this.template = document.querySelector("template#" + this.id);
+    this.triggers = document.querySelectorAll(
+      '*[data-modal-trigger="' + this.id + '"]'
+    );
+    this.triggers.length &&
+      this.triggers.forEach((trigger) =>
+        trigger.addEventListener("click", () => this.showModal())
+      );
+  }
+
   showModal() {
-    let elements = this.parseDOMString(this.domString);
-    elements = this.populateElements(elements);
-    this.appendElementsToDOM(elements);
-    //Need to add listeners here since clone does not copy event listeners - lame
-    this.addListeners();
+    this.elements = this.parseDOMString(this.domString)[0];
+    this.populateContentAndListeners();
+    document.body.append(this.elements);
+    this.onShow && this.onShow(this);
+  }
+
+  closeModal() {
+    this.onClose && this.onClose(this);
+    document.body.removeChild(document.querySelector(".modal#" + this.id)); // https://www.tutorialspoint.com/how-can-detached-dom-elements-cause-memory-leak-in-javascript
   }
 
   parseDOMString(domString) {
@@ -47,14 +70,20 @@ const BramModal = class {
     return Array.from(html.body.childNodes);
   }
 
-  populateElements(elements) {
+  populateContentAndListeners() {
     //root
-    elements[0].id = this.id;
+    this.elements.id = this.id;
     if (this.customClass) {
-      elements[0].classList.add(this.customClass);
+      this.elements.classList.add(this.customClass);
     }
 
-    const overlay = elements[0].children[0];
+    document.onkeydown = this.eventClose.bind(this);
+
+    const overlay = this.elements.children[0];
+    overlay.addEventListener("click", this.eventClose.bind(this));
+
+    const closeBtn = overlay.children[1];
+    closeBtn.addEventListener("click", this.eventClose.bind(this));
 
     if (this.template) {
       overlay.replaceChild(
@@ -62,57 +91,23 @@ const BramModal = class {
         overlay.children[0]
       );
     } else {
-      overlay.children[0].children[0].innerHTML = "HEADER";
-      overlay.children[0].children[1].innerHTML = "BODY";
-      if (this.footer) {
+      overlay.children[0].children[0].innerHTML = "HEADER DEFAULT";
+      overlay.children[0].children[1].innerHTML = "BODY ";
+      if (!this.hideFooter) {
         overlay.children[0].children[2].innerHTML = "FOOTER";
       }
     }
-
-    return elements;
   }
 
-  appendElementsToDOM(elements) {
-    const toNodeList = function (arrayOfNodes) {
-      let fragment = document.createDocumentFragment();
-      arrayOfNodes.forEach(function (item) {
-        fragment.appendChild(item.cloneNode(true));
-      });
-      return fragment.childNodes;
-    };
-
-    document.body.append(toNodeList(elements)[0]);
-  }
-
-  addListeners() {
-    const overlay = document.body.querySelector("#modal_overlay");
-    overlay.addEventListener("click", (e) => {
-      if (e.target !== e.currentTarget) return;
-      this.closeModal();
-    });
-
-    const btn = document.body.querySelector("#modal_close_btn");
-    btn.addEventListener("click", (e) => {
-      if (e.target !== e.currentTarget) return;
-      this.closeModal();
-    });
-
-    document.onkeydown = (e) => {
-      e = e || window.event;
-      var isEscape = false;
-      if ("key" in e) {
-        isEscape = e.key === "Escape" || e.key === "Esc";
-      } else {
-        isEscape = e.keyCode === 27;
-      }
-      if (isEscape) {
+  eventClose(e) {
+    if ("key" in e) {
+      if (e.key === "Escape" || e.key === "Esc" || e.keyCode === 27) {
         this.closeModal();
       }
-    };
-  }
-
-  closeModal() {
-    document.body.removeChild(document.querySelector(".modal#" + this.id)); // https://www.tutorialspoint.com/how-can-detached-dom-elements-cause-memory-leak-in-javascript
+    } else {
+      if (e.target !== e.currentTarget) return;
+      this.closeModal();
+    }
   }
 };
 
