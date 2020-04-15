@@ -22,15 +22,18 @@ npm install bram-modal --dev
 ### JS
 
 ```sh
-import BramModal from "./bram-modal";
+import BramModal from "bram-modal";
 
 new BramModal({
-    id:""
+    id:'',
     domString: '',
-    customClass: '',
-    hideFooter: false,
+    classModifier: '',
     onClose: (modal) => console.log(modal),
-    onShow: (modal) => console.log(modal),
+    onShow: (modal) => {
+        const body = modal.elements.querySelector('#modal_body');
+        body.classList.add('cursor-pointer');
+        body.addEventListener("click", () => modal.closeModal());
+    },
 });
 
 ```
@@ -43,7 +46,7 @@ new BramModal({
   <head>
     <meta charset="utf-8" />
     <title>Bram Modal</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./tailwind.css" />
     <script src="./index.js"></script>
   </head>
 
@@ -61,7 +64,7 @@ new BramModal({
   </body>
 </html>
 
-<template id="modal-1">
+<template data-modal-content="modal-1">
   <div id="modal_container" class="container p-16 bg-white max-h-screen m-auto">
     <div id="modal_header">HEADER</div>
     <div id="modal_body">BODY</div>

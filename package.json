@@ -1,6 +1,6 @@
 {
   "name": "bram-modal",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "description": "",
   "main": "dist/modal.min.js",
   "homepage": "https://github.com/crispclean/bram-modal#readme",
