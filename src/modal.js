@@ -1,15 +1,18 @@
 /** inspired on https://micromodal.now.sh/ &  https://tingle.robinparisi.com/ */
 
-const defaultDOMString = `
+const defaultModalDomString = `
   <div class="modal">
     <div class="modal__overlay fixed top-0 left-0 right-0 bottom-0 bg-black flex justify-center items-center z-50">
-        <div class="modal__content container p-16 bg-white max-h-screen m-auto">
-            <div class="modal__header"></div>
-            <div class="modal__body"></div>
-            <div class="modal__footer"></div>
-        </div>
+        <div class="modal__content w-full h-full flex justify-center items-center"></div>
         <div class="modal__closeButton fixed right-0 top-0 mr-4 mt-4 text-white cursor-pointer z-10 text-white">&#10006;</div>
     </div>
+  </div>`;
+
+const defaultContentDomString = `
+  <div class="container p-16 bg-white max-h-screen m-auto">
+    <div class="modal__header">HEADER</div>
+    <div class="modal__body">BODY</div>
+    <div class="modal__footer">FOOTER</div>
   </div>`;
 
 const BramModal = class {
@@ -19,7 +22,8 @@ const BramModal = class {
     }
 
     this.id = params.id;
-    this.domString = defaultDOMString;
+    this.modalDomString = defaultModalDomString;
+    this.contentDomString = params.contentDomString || defaultContentDomString;
     this.classModifier = params.classModifier;
     this.onShow = params.onShow;
     this.onClose = params.onClose;
@@ -29,12 +33,12 @@ const BramModal = class {
       document.readyState === "complete" ||
       document.readyState === "loaded"
     ) {
+      this.onDomContentLoaded();
+    } else {
       document.addEventListener(
         "DOMContentLoaded",
         this.onDomContentLoaded.bind(this)
       );
-    } else {
-      this.onDomContentLoaded();
     }
   }
 
@@ -54,7 +58,7 @@ const BramModal = class {
 
   showModal() {
     if (document.getElementById(this.id)) return;
-    this.elements = this.parseDOMString(this.domString)[0];
+    this.elements = this.parseDOMString(this.modalDomString)[0];
     this.populateContentAndListeners();
     document.body.append(this.elements);
     if (this.disableScroll) document.body.style.overflow = "hidden";
@@ -87,17 +91,12 @@ const BramModal = class {
     const closeBtn = overlay.children[1];
     closeBtn.addEventListener("click", this.eventClose.bind(this));
 
+    const content = overlay.children[0];
+
     if (this.template) {
-      overlay.replaceChild(
-        this.template.content.cloneNode(true),
-        overlay.children[0]
-      );
+      content.append(this.template.content.cloneNode(true));
     } else {
-      overlay.children[0].children[0].innerHTML = "HEADER DEFAULT";
-      overlay.children[0].children[1].innerHTML = "BODY ";
-      if (!this.hideFooter) {
-        overlay.children[0].children[2].innerHTML = "FOOTER";
-      }
+      content.innerHTML = this.contentDomString;
     }
   }
 

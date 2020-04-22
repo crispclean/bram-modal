@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Bram Modal</title>
+    <link rel="stylesheet" href="/styles.8986bff4.css">
+    <script src="/src.e31bb0bc.js"></script>
+  <script src="/styles.8986bff4.js"></script></head>
+
+  <body class="m-16">
+    <h1>Bram Modal Demo</h1>
+
+    <div class="pt-16">
+      <button data-modal-trigger="modal-1" class="px-4 bg-indigo-500 p-3 rounded-lg text-white hover:bg-indigo-400">
+        Open modal
+      </button>
+    </div>
+  </body>
+</html>
+
+<template data-modal-content="modal-1">
+  <div class="container p-16 bg-white max-h-screen m-auto">
+    <div class="modal__header"></div>
+    <div class="modal__body"></div>
+    <div class="modal__footer"></div>
+  </div>
+</template>
