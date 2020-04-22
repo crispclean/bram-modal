@@ -31,7 +31,7 @@ const BramModal = class {
 
     if (
       document.readyState === "complete" ||
-      document.readyState === "loaded"
+      document.readyState === "interactive"
     ) {
       this.onDomContentLoaded();
     } else {
